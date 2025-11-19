@@ -35,28 +35,40 @@ def set_3d_axes_equal(ax: plt.Axes) -> None:
     ax.set_zlim3d([z_middle - plot_radius, z_middle + plot_radius])  # type: ignore
 
 
-def plot_3d_trajectory(sol_x):
-
-    fig = plt.figure()
+def plot_3d_trajectory(
+    sol_x: np.ndarray,
+    x_size, y_size,
+    labels: list,
+    colors: list,
+    legend: bool,
+) -> None:
+    fig = plt.figure(figsize=(x_size, y_size))
     ax = fig.add_subplot(111, projection="3d")
     ax.set_xlabel("$x$")
     ax.set_ylabel("$y$")
-    ax.set_zlabel("$z$")
+    ax.set_zlabel("$z$")  # type: ignore
 
     for i in range(sol_x.shape[1]):
         traj = ax.plot(
             sol_x[:, i, 0],
             sol_x[:, i, 1],
-            sol_x[:, i, 2]
+            sol_x[:, i, 2],
+            color=colors[i],
         )
         # Plot the last position with marker
         ax.scatter(
             sol_x[-1, i, 0],
             sol_x[-1, i, 1],
             sol_x[-1, i, 2],
-            marker="o"
+            marker="o",
+            color=traj[0].get_color(),
+            label=labels[i],
         )
 
     set_3d_axes_equal(ax)
+
+    if legend:
+        ax.legend(loc="center right", bbox_to_anchor=(1.325, 0.5))
+        fig.subplots_adjust(right=0.7)
 
     plt.show()
